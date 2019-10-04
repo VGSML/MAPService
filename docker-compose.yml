@@ -38,12 +38,12 @@ services:
     build:
       context: ./OSMTS/
       dockerfile: osmts.dockerfile
-    links:
+    links:0/?1?1?1
       - mapdb
     restart: always
     container_name: osmts
     environment: 
-      OSM_IMPORTFILE: "andorra-latest.osm.pbf"  # planet-190923.osm.bz2"
+      OSM_IMPORTFILE: "andorra-latest.osm.bz2"  # planet-190923.osm.bz2"
       IMPORT_RAM_CACHE: 49152
       IMPORT_PROCESS_NUM: 12
       WEBPORTS: 50100
@@ -54,5 +54,7 @@ services:
       - "/ssd/data0/osm_data:/data"
     depends_on: 
       - mapdb
+    ports:
+      - 50100:80
 
 
