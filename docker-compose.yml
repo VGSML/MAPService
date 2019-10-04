@@ -38,7 +38,7 @@ services:
     build:
       context: ./OSMTS/
       dockerfile: osmts.dockerfile
-    links:0/?1?1?1
+    links:
       - mapdb
     restart: always
     container_name: osmts
