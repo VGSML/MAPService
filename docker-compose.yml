@@ -33,6 +33,7 @@ services:
       - 50102:80
     depends_on: 
       - mapdb
+      - osmts
   osmts:
     build:
       context: ./OSMTS/
@@ -42,7 +43,7 @@ services:
     restart: always
     container_name: osmts
     environment: 
-      OSM_IMPORTFILE: "slovakia-latest.osm.bz2"  # planet-190923.osm.bz2"
+      OSM_IMPORTFILE: "andorra-latest.osm.pbf"  # planet-190923.osm.bz2"
       IMPORT_RAM_CACHE: 49152
       IMPORT_PROCESS_NUM: 12
       WEBPORTS: 50100

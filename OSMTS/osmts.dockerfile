@@ -53,11 +53,13 @@ RUN cd /src && \
     carto project.mml > mapnik.xml
 
 # loading data into OSMDB
-VOLUME ["/data"]
+RUN mkdir -p /data
+#VOLUME [ "/data" ]
 
 # download shapefile
 #RUN /src/openstreetmap-carto/scripts/get-shapefiles.py
 RUN apt-get install -y fonts-noto-cjk fonts-noto-hinted fonts-noto-unhinted ttf-unifont
+
 RUN mkdir -p /docker-entrypoint.d
 ADD docker-entrypoint.sh /docker-entrypoint.d
 ENTRYPOINT ["sh","/docker-entrypoint.d/docker-entrypoint.sh"]

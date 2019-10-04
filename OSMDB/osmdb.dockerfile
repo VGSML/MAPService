@@ -1,5 +1,5 @@
 # create postgre with postgis extensions, create database, user for osmdb
-FROM postgres:latest
+FROM postgres:10.10
 ENV PG_MAJOR 10
 ENV POSTGIS_MAJOR 2.4
 # Update repository and install postgis
