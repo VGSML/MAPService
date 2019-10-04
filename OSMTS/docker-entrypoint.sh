@@ -3,7 +3,7 @@ if [ ! -f .initialized ]; then
     echo "Initializing osmts"
     echo "-d ${POSTGRES_DB} --create --slim -G --hstore -H mapdb -U ${POSTGRES_USER} -W ${POSTGRES_PASSWORD}" 
     export PGPASS=$POSTGRES_PASSWORD
-    exec osm2pgsql -d "${POSTGRES_DB}" --create --slim -G --hstore -H mapdb -U "${POSTGRES_USER}" -W "${POSTGRES_PASSWORD}"\
+    exec osm2pgsql -d "${POSTGRES_DB}" --create --slim -G --hstore -H mapdb -U "${POSTGRES_USER}" -W "${POSTGRES_PASSWORD}" \
               --tag-transform-script /src/openstreetmap-carto/openstreetmap-carto.lua \ 
               -C  $IMPORT_RAM_CACHE --number-process $IMPORT_PROCESS_NUM \
               -S /src/openstreetmap-carto/openstreetmap-carto.style /data/$OSM_IMPORTFILE
