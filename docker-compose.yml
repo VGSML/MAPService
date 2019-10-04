@@ -1,0 +1,57 @@
+# Create map service: OSM local tile server, create database server, geoserver
+version: "3"
+
+services: 
+  mapdb:
+    build:
+      context: ./OSMDB/
+      dockerfile: osmdb.dockerfile
+    restart: always
+    container_name: osmdb
+    environment: 
+      POSTGRES_DB: "osmdb"
+      POSTGRES_USER: "osmrender"
+      POSTGRES_PASSWORD: "osmpassword"
+      POSTGRES_PORT_LH: 50101
+      POSTGRES_DATA_VOLUME: "/hdd2/db_data/osmdb_data"
+    volumes: 
+      - "/hdd2/db_data/osmdb_data:/var/lib/postgresql/data"
+    ports:
+      - 50101:5432
+  mapdbadmin:
+    image: dpage/pgadmin4
+    restart: always
+    links:
+      - mapdb
+    container_name: mapdbadmin
+    environment:
+       PGADMIN_DEFAULT_EMAIL: "admin@sml"
+       PGADMIN_DEFAULT_PASSWORD: "pgadminpassword"
+    volumes:
+      - "/ssd/data0/pgadmin4_data:/var/lib/pgadmin"
+    ports:
+      - 50102:80
+    depends_on: 
+      - mapdb
+  osmts:
+    build:
+      context: ./OSMTS/
+      dockerfile: osmts.dockerfile
+    links:
+      - mapdb
+    restart: always
+    container_name: osmts
+    environment: 
+      OSM_IMPORTFILE: "slovakia-latest.osm.bz2"  # planet-190923.osm.bz2"
+      IMPORT_RAM_CACHE: 49152
+      IMPORT_PROCESS_NUM: 12
+      WEBPORTS: 50100
+      POSTGRES_DB: "osmdb"
+      POSTGRES_USER: "osmrender"
+      POSTGRES_PASSWORD: "osmpassword"
+    volumes: 
+      - "/ssd/data0/osm_data:/data"
+    depends_on: 
+      - mapdb
+
+
