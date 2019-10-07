@@ -49,16 +49,29 @@ RUN apt-get install -y npm nodejs
 RUN cd /src && \
     git clone git://github.com/gravitystorm/openstreetmap-carto.git && \
     cd openstreetmap-carto && \
-    npm install -g carto && \
-    carto project.mml > mapnik.xml
+    npm install -g carto 
 
-# loading data into OSMDB
+# instal fonts
+RUN apt-get install -y fonts-noto-cjk fonts-noto-hinted fonts-noto-unhinted ttf-unifont
+
+# generate style xml with carto
+COPY project.mml /src/openstreetmap-carto/project.mml
+RUN  carto /src/openstreetmap-carto/project.mml > /src/openstreetmap-carto/mapnik.xml
+# download shapefile
+RUN /src/openstreetmap-carto/scripts/get-shapefiles.py
+
+# link data to OSM files
 RUN mkdir -p /data
 #VOLUME [ "/data" ]
 
-# download shapefile
-#RUN /src/openstreetmap-carto/scripts/get-shapefiles.py
-RUN apt-get install -y fonts-noto-cjk fonts-noto-hinted fonts-noto-unhinted ttf-unifont
+# Configure apache
+RUN mkdir /var/lib/mod_tile && \
+    mkdir /var/run/renderd
+
+COPY mod_tile.conf /etc/apache2/conf-available/mod_tile.conf
+COPY apache.conf /etc/apache2/sites-available/000-default.conf
+COPY renderd.conf /usr/local/etc/renderd.conf
+RUN a2enconf mod_tile
 
 RUN mkdir -p /docker-entrypoint.d
 ADD docker-entrypoint.sh /docker-entrypoint.d

@@ -12,3 +12,6 @@ RUN apt-get update \
 RUN mkdir -p /docker-entrypoint-initdb.d
 COPY ./initdb-postgis.sh /docker-entrypoint-initdb.d/
 
+# copy postgress configuration file
+COPY postgresql.conf /var/lib/postgresql/data/
+
