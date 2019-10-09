@@ -44,7 +44,8 @@ services:
     container_name: osmts
     environment: 
       OSM_IMPORTDIR: "osm_files"
-      IMPORT_RAM_CACHE: 49152
+      CONFIGDIR: "config"
+      IMPORT_RAM_CACHE: 32000
       IMPORT_PROCESS_NUM: 12
       POSTGRES_DB: "osmdb"
       POSTGRES_USER: "osmrender"

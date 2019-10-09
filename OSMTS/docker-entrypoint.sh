@@ -17,6 +17,56 @@ do
     fi
     mv "${FILE_UPLOAD}" "/data/${OSM_IMPORTDIR}/UPLOAD/"
 done
+
+echo "Searching new configuration file ..."
+
+cp /etc/apache2/sites-available/000-default.conf "/data/${CONFIGDIR}/current/apache.conf"
+if [ -f "/data/${CONFIGDIR}/apache.conf" ]; then
+    echo "Load new apache config"
+    cp "/data/${CONFIGDIR}/apache.conf" /etc/apache2/sites-available/000-default.conf
+    mv "/data/${CONFIGDIR}/apache.conf" "/data/${CONFIGDIR}/current/apache.conf"
+fi
+cp /etc/apache2/conf-available/security.conf "/data/${CONFIGDIR}/current/security.conf"
+if [ -f "/data/${CONFIGDIR}/security.conf" ]; then
+    echo "Load new style apache security config"
+    cp "/data/${CONFIGDIR}/current/security.conf" /etc/apache2/conf-available/security.conf
+    mv "/data/${CONFIGDIR}/current/security.conf" "/data/${CONFIGDIR}/current/security.conf"
+fi
+cp /usr/local/etc/renderd.conf "/data/${CONFIGDIR}/current/renderd.conf"
+if [ -f "/data/${CONFIGDIR}/renderd.conf" ]; then
+    echo "Load new render config"
+    cp "/data/${CONFIGDIR}/renderd.conf" /usr/local/etc/renderd.conf
+    mv "/data/${CONFIGDIR}/renderd.conf" "/data/${CONFIGDIR}/current/renderd.conf"
+fi
+cp /src/openstreetmap-carto/project.mml "/data/${CONFIGDIR}/current/project.mml"
+cp /src/openstreetmap-carto/style.mss "/data/${CONFIGDIR}/Stylesheet/current/"
+cp /src/openstreetmap-carto/fonts.mss "/data/${CONFIGDIR}/Stylesheet/current/"
+cp /src/openstreetmap-carto/shapefiles.mss "/data/${CONFIGDIR}/Stylesheet/current/"
+cp /src/openstreetmap-carto/landcover.mss "/data/${CONFIGDIR}/Stylesheet/current/"
+cp /src/openstreetmap-carto/water-features.mss "/data/${CONFIGDIR}/Stylesheet/current/"
+cp /src/openstreetmap-carto/road-colors-generated.mss "/data/${CONFIGDIR}/Stylesheet/current/"
+cp /src/openstreetmap-carto/roads.mss "/data/${CONFIGDIR}/Stylesheet/current/"
+cp /src/openstreetmap-carto/placenames.mss "/data/${CONFIGDIR}/Stylesheet/current/"
+cp /src/openstreetmap-carto/buildings.mss "/data/${CONFIGDIR}/Stylesheet/current/"
+cp /src/openstreetmap-carto/amenity-points.mss "/data/${CONFIGDIR}/Stylesheet/current/"
+cp /src/openstreetmap-carto/ferry-routes.mss "/data/${CONFIGDIR}/Stylesheet/current/"
+cp /src/openstreetmap-carto/aerialways.mss "/data/${CONFIGDIR}/Stylesheet/current/"
+cp /src/openstreetmap-carto/admin.mss "/data/${CONFIGDIR}/Stylesheet/current/"
+cp /src/openstreetmap-carto/addressing.mss "/data/${CONFIGDIR}/Stylesheet/current/"
+
+if [ -f "/data/${CONFIGDIR}/project.mml" ]; then
+    echo "Load new style project.mml config"
+    cp "/data/${CONFIGDIR}/project.mml" /src/openstreetmap-carto/project.mml
+    for ss_file in `find "/data/${CONFIGDIR}/Stylesheet/" -type f`
+    do
+        echo "Copy ss file: ${ss_file}"
+        cp "${ss_file}" /src/openstreetmap-carto/
+        mv "${ss_file}" "/data/${CONFIGDIR}/Stylesheet/current/"
+    done
+    carto /src/openstreetmap-carto/project.mml > /src/openstreetmap-carto/mapnik.xml
+    mv "/data/${CONFIGDIR}/project.mml" "/data/${CONFIGDIR}/current/project.mml"
+fi
+
 echo "Reload apache configuration"
 service apache2 reload
 service apache2 reload

@@ -71,7 +71,7 @@ RUN mkdir /var/lib/mod_tile && \
 COPY mod_tile.conf /etc/apache2/conf-available/mod_tile.conf
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 COPY renderd.conf /usr/local/etc/renderd.conf
-RUN a2enconf mod_tile
+RUN a2enconf mod_tile && a2enmod headers
 
 RUN mkdir -p /docker-entrypoint.d
 ADD docker-entrypoint.sh /docker-entrypoint.d
