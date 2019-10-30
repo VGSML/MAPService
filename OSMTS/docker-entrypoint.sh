@@ -38,21 +38,7 @@ if [ -f "/data/${CONFIGDIR}/renderd.conf" ]; then
     cp "/data/${CONFIGDIR}/renderd.conf" /usr/local/etc/renderd.conf
     mv "/data/${CONFIGDIR}/renderd.conf" "/data/${CONFIGDIR}/current/renderd.conf"
 fi
-cp /src/openstreetmap-carto/project.mml "/data/${CONFIGDIR}/current/project.mml"
-cp /src/openstreetmap-carto/style.mss "/data/${CONFIGDIR}/Stylesheet/current/"
-cp /src/openstreetmap-carto/fonts.mss "/data/${CONFIGDIR}/Stylesheet/current/"
-cp /src/openstreetmap-carto/shapefiles.mss "/data/${CONFIGDIR}/Stylesheet/current/"
-cp /src/openstreetmap-carto/landcover.mss "/data/${CONFIGDIR}/Stylesheet/current/"
-cp /src/openstreetmap-carto/water-features.mss "/data/${CONFIGDIR}/Stylesheet/current/"
-cp /src/openstreetmap-carto/road-colors-generated.mss "/data/${CONFIGDIR}/Stylesheet/current/"
-cp /src/openstreetmap-carto/roads.mss "/data/${CONFIGDIR}/Stylesheet/current/"
-cp /src/openstreetmap-carto/placenames.mss "/data/${CONFIGDIR}/Stylesheet/current/"
-cp /src/openstreetmap-carto/buildings.mss "/data/${CONFIGDIR}/Stylesheet/current/"
-cp /src/openstreetmap-carto/amenity-points.mss "/data/${CONFIGDIR}/Stylesheet/current/"
-cp /src/openstreetmap-carto/ferry-routes.mss "/data/${CONFIGDIR}/Stylesheet/current/"
-cp /src/openstreetmap-carto/aerialways.mss "/data/${CONFIGDIR}/Stylesheet/current/"
-cp /src/openstreetmap-carto/admin.mss "/data/${CONFIGDIR}/Stylesheet/current/"
-cp /src/openstreetmap-carto/addressing.mss "/data/${CONFIGDIR}/Stylesheet/current/"
+cp -R /src/openstreetmap-carto/ "/data/${CONFIGDIR}/Stylesheet/current/"
 
 if [ -f "/data/${CONFIGDIR}/project.mml" ]; then
     echo "Load new style project.mml config"
@@ -64,8 +50,15 @@ if [ -f "/data/${CONFIGDIR}/project.mml" ]; then
         mv "${ss_file}" "/data/${CONFIGDIR}/Stylesheet/current/"
     done
     carto /src/openstreetmap-carto/project.mml > /src/openstreetmap-carto/mapnik.xml
+    cp -R /src/openstreetmap-carto/ "/data/${CONFIGDIR}/Stylesheet/current/"
     mv "/data/${CONFIGDIR}/project.mml" "/data/${CONFIGDIR}/current/project.mml"
 fi
+# copy style_dev carto files if does not exists
+if [ ! -d "/data/${STYLE_DEV}" ]; then
+    cp -R /src/openstreetmap-carto/ "/data/${STYLE_DEV}/"
+    mkdir "/data/${STYLE_DEV}/mod_tile"
+fi
+
 
 echo "Reload apache configuration"
 service apache2 reload

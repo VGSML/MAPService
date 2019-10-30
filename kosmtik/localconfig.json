@@ -1,0 +1,18 @@
+[
+    {
+        "where": "center",
+        "then": [33.52801, 44.60656, 15]
+    },
+    {
+        "where": "Layer",
+        "if": {
+            "Datasource.type": "postgis"
+        },
+        "then": {
+            "Datasource.dbname": "osmdb",
+            "Datasource.password": "osmpassword",
+            "Datasource.user": "osmrender",
+            "Datasource.host": "mapdb"
+        }
+    }
+]

@@ -45,6 +45,7 @@ services:
     environment: 
       OSM_IMPORTDIR: "osm_files"
       CONFIGDIR: "config"
+      STYLE_DEV: "config/Stylesheet/style_dev"
       IMPORT_RAM_CACHE: 32000
       IMPORT_PROCESS_NUM: 12
       POSTGRES_DB: "osmdb"
@@ -57,5 +58,27 @@ services:
       - mapdb
     ports:
       - 50100:80
+  kosmtik:
+    build:
+      context: kosmtik
+      dockerfile: kosmtik.dockerfile
+    links:
+      - mapdb
+    restart: always
+    container_name: kosmtik
+    environment: 
+      PROJECTDIR: "config/Stylesheet/style_dev"
+      PGHOST: "mapdb"
+      PGDATABASE: "osmdb"
+      PGUSER: "osmrender"
+      PGPASSWORD: "osmpassword"
+    volumes: 
+      - "/ssd/data0/osm_data:/data:z"
+    depends_on: 
+      - mapdb
+      - osmts
+    ports: 
+      - 50103:6789
+      - 50104:8111
 
 
