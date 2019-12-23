@@ -13,9 +13,9 @@ services:
       POSTGRES_USER: "osmrender"
       POSTGRES_PASSWORD: "osmpassword"
       POSTGRES_PORT_LH: 50101
-      POSTGRES_DATA_VOLUME: "/Users/vladimirgribanov/Dev/work_data/pg_data/db_data"
+      POSTGRES_DATA_VOLUME: "/hdd2/db_data/osmdb_data"
     volumes: 
-      - "/Users/vladimirgribanov/Dev/work_data/pg_data/db_data:/var/lib/postgresql/data"
+      - "/hdd2/db_data/osmdb_data:/var/lib/postgresql/data"
     ports:
       - 50101:5432
   mapdbadmin:
@@ -28,7 +28,7 @@ services:
        PGADMIN_DEFAULT_EMAIL: "admin@sml"
        PGADMIN_DEFAULT_PASSWORD: "pgadminpassword"
     volumes:
-      - "/Users/vladimirgribanov/Dev/work_data/pg_data/pg_admin:/var/lib/pgadmin"
+      - "/ssd/data0/pg_admin4_data:/var/lib/pgadmin"
     ports:
       - 50102:80
     depends_on: 
@@ -46,13 +46,13 @@ services:
       OSM_IMPORTDIR: "osm_files"
       CONFIGDIR: "config"
       STYLE_DEV: "config/Stylesheet/style_dev"
-      IMPORT_RAM_CACHE: 2048
-      IMPORT_PROCESS_NUM: 2
+      IMPORT_RAM_CACHE: 32048
+      IMPORT_PROCESS_NUM: 12
       POSTGRES_DB: "osmdb"
       POSTGRES_USER: "osmrender"
       POSTGRES_PASSWORD: "osmpassword"
     volumes: 
-      - "/Users/vladimirgribanov/Dev/work_data/osm_data:/data:z"
+      - "/ssd/data0/osm_data:/data:z"
     depends_on: 
       - mapdb
     ports:
@@ -72,7 +72,7 @@ services:
       PGUSER: "osmrender"
       PGPASSWORD: "osmpassword"
     volumes: 
-      - "/Users/vladimirgribanov/Dev/work_data/osm_data:/data:z"
+      - "/ssd/data0/osm_data:/data:z"
     depends_on: 
       - mapdb
       - osmts
