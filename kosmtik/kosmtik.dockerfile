@@ -4,7 +4,10 @@ FROM ubuntu:bionic
 RUN apt-get update && apt-get install --no-install-recommends -y \
     git ca-certificates curl gnupg postgresql-client python fonts-hanazono \
     fonts-noto-cjk fonts-noto-hinted fonts-noto-unhinted mapnik-utils \
-    nodejs npm ttf-unifont unzip && rm -rf /var/lib/apt/lists/*
+    fonts-roboto fonts-roboto-hinted fonts-roboto-unhinted fonts-roboto-fontface \
+    fonts-roboto-slab \
+    nodejs npm ttf-unifont unzip fontconfig && rm -rf /var/lib/apt/lists/* \
+    && fc-cache -fv
 
 # Kosmtik with plugins, forcing prefix to /usr because bionic sets
 # npm prefix to /usr/local, which breaks the install

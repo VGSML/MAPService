@@ -52,7 +52,9 @@ RUN cd /src && \
     npm install -g carto 
 
 # instal fonts
-RUN apt-get install -y fonts-noto-cjk fonts-noto-hinted fonts-noto-unhinted ttf-unifont
+RUN apt-get install -y fonts-noto-cjk fonts-noto-hinted fonts-noto-unhinted \
+    ttf-unifont fonts-roboto fonts-roboto-hinted fonts-roboto-unhinted \
+    fonts-roboto-fontface fonts-roboto-slab fontconfig && fc-cache -fv
 
 # generate style xml with carto
 COPY project.mml /src/openstreetmap-carto/project.mml
@@ -73,6 +75,7 @@ COPY apache.conf /etc/apache2/sites-available/000-default.conf
 COPY renderd.conf /usr/local/etc/renderd.conf
 RUN a2enconf mod_tile 
 RUN a2enmod headers
+RUN apt-get install -y postgresql-client
 
 RUN mkdir -p /docker-entrypoint.d
 ADD docker-entrypoint.sh /docker-entrypoint.d
