@@ -1,6 +1,12 @@
 #!/bin/sh
 echo "Initializing osmts ..."
+echo "Wait connect to pgsql mapdb"
+export PGPASS=$POSTGRES_PASSWORD
+export PGPASSWORD=$POSTGRES_PASSWORD
 
+until psql -h "mapdb" -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -c "\q"; do
+    sleep 1
+done
 echo "Searching files for upload in mapdb in /data/${OSM_IMPORTDIR}/IMPORT ..."
 for FILE_UPLOAD in `find "/data/${OSM_IMPORTDIR}/IMPORT/" -type f`
 do
@@ -8,15 +14,18 @@ do
     echo "${FILE_UPLOAD} -C ${IMPORT_RAM_CACHE} ${IMPORT_PROCESS_NUM}" 
     export PGPASS=$POSTGRES_PASSWORD
     export PGPASSWORD=$POSTGRES_PASSWORD
-    # If first load or need recreated DB looking .initialized file in OSM_IMPORTDIR
+    # If first load or need recreated DB looking initialized file in OSM_IMPORTDIR
     if [ ! -f "/data/${OSM_IMPORTDIR}/.initialized" ]; then
         osm2pgsql -d "${POSTGRES_DB}" --create --slim -H mapdb -U "${POSTGRES_USER}" -G --hstore --tag-transform-script /src/openstreetmap-carto/openstreetmap-carto.lua -C  $IMPORT_RAM_CACHE --number-process $IMPORT_PROCESS_NUM -S /src/openstreetmap-carto/openstreetmap-carto.style "${FILE_UPLOAD}"
         echo "File init ${FILE_UPLOAD}"  > /data/${OSM_IMPORTDIR}/.initialized
+        echo "Copy fonts"
+        cp -R /usr/share/fonts/truetype/* /data/fonts/
     else
         osm2pgsql -d "${POSTGRES_DB}" --append --slim -H mapdb -U "${POSTGRES_USER}" -G --hstore --tag-transform-script /src/openstreetmap-carto/openstreetmap-carto.lua -C  $IMPORT_RAM_CACHE --number-process $IMPORT_PROCESS_NUM -S /src/openstreetmap-carto/openstreetmap-carto.style "${FILE_UPLOAD}"
     fi
     mv "${FILE_UPLOAD}" "/data/${OSM_IMPORTDIR}/UPLOAD/"
 done
+
 
 echo "Searching new configuration file ..."
 
