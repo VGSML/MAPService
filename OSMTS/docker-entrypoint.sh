@@ -18,8 +18,6 @@ do
     if [ ! -f "/data/${OSM_IMPORTDIR}/.initialized" ]; then
         osm2pgsql -d "${POSTGRES_DB}" --create --slim -H mapdb -U "${POSTGRES_USER}" -G --hstore --tag-transform-script /src/openstreetmap-carto/openstreetmap-carto.lua -C  $IMPORT_RAM_CACHE --number-process $IMPORT_PROCESS_NUM -S /src/openstreetmap-carto/openstreetmap-carto.style "${FILE_UPLOAD}"
         echo "File init ${FILE_UPLOAD}"  > /data/${OSM_IMPORTDIR}/.initialized
-        echo "Copy fonts"
-        cp -R /usr/share/fonts/truetype/* /data/fonts/
     else
         osm2pgsql -d "${POSTGRES_DB}" --append --slim -H mapdb -U "${POSTGRES_USER}" -G --hstore --tag-transform-script /src/openstreetmap-carto/openstreetmap-carto.lua -C  $IMPORT_RAM_CACHE --number-process $IMPORT_PROCESS_NUM -S /src/openstreetmap-carto/openstreetmap-carto.style "${FILE_UPLOAD}"
     fi
@@ -68,10 +66,9 @@ if [ ! -d "/data/${STYLE_DEV}" ]; then
     mkdir "/data/${STYLE_DEV}/mod_tile"
 fi
 
-
 echo "Reload apache configuration"
-service apache2 reload
 service apache2 reload
 
 service apache2 start
+echo "Start render"
 exec renderd -f -c /usr/local/etc/renderd.conf 

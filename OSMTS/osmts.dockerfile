@@ -61,7 +61,8 @@ COPY project.mml /src/openstreetmap-carto/project.mml
 RUN  carto /src/openstreetmap-carto/project.mml > /src/openstreetmap-carto/mapnik.xml
 # download shapefile
 RUN /src/openstreetmap-carto/scripts/get-shapefiles.py
-
+RUN apt-get update && \
+    apt-get install -y postgresql-client
 # link data to OSM files
 RUN mkdir -p /data
 #VOLUME [ "/data" ]
@@ -75,7 +76,6 @@ COPY apache.conf /etc/apache2/sites-available/000-default.conf
 COPY renderd.conf /usr/local/etc/renderd.conf
 RUN a2enconf mod_tile 
 RUN a2enmod headers
-RUN apt-get install -y postgresql-client
 
 RUN mkdir -p /docker-entrypoint.d
 ADD docker-entrypoint.sh /docker-entrypoint.d
