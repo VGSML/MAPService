@@ -26,7 +26,6 @@ done
 
 
 echo "Searching new configuration file ..."
-
 cp /etc/apache2/sites-available/000-default.conf "/data/${CONFIGDIR}/current/apache.conf"
 if [ -f "/data/${CONFIGDIR}/apache.conf" ]; then
     echo "Load new apache config"
@@ -45,26 +44,32 @@ if [ -f "/data/${CONFIGDIR}/renderd.conf" ]; then
     cp "/data/${CONFIGDIR}/renderd.conf" /usr/local/etc/renderd.conf
     mv "/data/${CONFIGDIR}/renderd.conf" "/data/${CONFIGDIR}/current/renderd.conf"
 fi
-cp -R /src/openstreetmap-carto/ "/data/${CONFIGDIR}/Stylesheet/current/"
-
+cp /src/openstreetmap-carto/project.mml "/data/${CONFIGDIR}/current/project.mml"
 if [ -f "/data/${CONFIGDIR}/project.mml" ]; then
     echo "Load new style project.mml config"
     cp "/data/${CONFIGDIR}/project.mml" /src/openstreetmap-carto/project.mml
-    for ss_file in `find "/data/${CONFIGDIR}/Stylesheet/" -type f`
+    for ss_file in `find "/data/${CONFIGDIR}/Stylesheet/new_config/" -type f`
     do
         echo "Copy ss file: ${ss_file}"
         cp "${ss_file}" /src/openstreetmap-carto/
         mv "${ss_file}" "/data/${CONFIGDIR}/Stylesheet/current/"
     done
+    echo "Generate mapnik.xml"
     carto /src/openstreetmap-carto/project.mml > /src/openstreetmap-carto/mapnik.xml
-    cp -R /src/openstreetmap-carto/ "/data/${CONFIGDIR}/Stylesheet/current/"
+    cp /src/openstreetmap-carto/project.mml "/data/${CONFIGDIR}/Stylesheet/current/"
+    cp /src/openstreetmap-carto/mapnik.xml "/data/${CONFIGDIR}/Stylesheet/current/"
     mv "/data/${CONFIGDIR}/project.mml" "/data/${CONFIGDIR}/current/project.mml"
+    echo "Clear cahce"
+    rm -r -f "/var/lib/mod_tile/*"
 fi
 # copy style_dev carto files if does not exists
 if [ ! -d "/data/${STYLE_DEV}" ]; then
-    cp -R /src/openstreetmap-carto/ "/data/${STYLE_DEV}/"
+    echo "Copy carto config to /data/${STYLE_DEV}/ "
+    cp -R --verbose /src/openstreetmap-carto/ "/data/${STYLE_DEV}/"
+    cp -R --verbose /src/openstreetmap-carto/* "/data/${CONFIGDIR}/Stylesheet/current/"
     mkdir "/data/${STYLE_DEV}/mod_tile"
 fi
+
 
 echo "Reload apache configuration"
 service apache2 reload
